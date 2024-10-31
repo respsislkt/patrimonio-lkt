@@ -1,3 +1,64 @@
 <script>
+    function crearTablaRazon() {
+        // Verifica si la tabla ya existe y la elimina
+        let tablaExistente = document.getElementById('tablaRazon');
+        if (tablaExistente) {
+            tablaExistente.remove();
+        }
 
+        // Llama a la función en el servidor
+        google.script.run.withSuccessHandler(function (obj) {
+            // Crea la tabla
+            let tabla = document.createElement('table');
+            tabla.id = 'tablaRazon';
+
+            let tablaHeader = document.createElement('thead');
+            let tablaBody = document.createElement('tbody');
+
+            for(let i = 0; i < obj.length; i++){
+                let fila = document.createElement('tr');
+                for(let j = 0; j<obj[i].length; j++){
+                    let celda = document.createElement('td');
+                    celda.textContent = obj[i][j];
+                    fila.appendChild(celda);
+                }
+                if(i==0){
+                    tablaHeader.appendChild(fila);
+                    tabla.appendChild(tablaHeader);
+                }
+                else
+                {
+                    tablaBody.appendChild(fila);
+                }
+            }
+
+            // Array.from(obj).forEach((filaActual, i) => {
+            //     let fila = document.createElement('tr');
+            //     filaActual.forEach(celdaActual => {
+            //         let celda = document.createElement('td');
+            //         celda.textContent = celdaActual;
+            //         fila.appendChild(celda);
+            //     });
+
+            //     if (i === 0) {
+            //         // Añadir la primera fila a la cabecera
+            //         tablaHeader.appendChild(fila);
+            //     } else {
+            //         // Añadir las siguientes filas al cuerpo
+            //         tablaBody.appendChild(fila);
+            //     }
+            // });
+
+            // Agregar las clases a la cabecera y al cuerpo
+            tablaHeader.classList.add('table-dark');
+            tabla.appendChild(tablaHeader);
+            tabla.appendChild(tablaBody);
+
+            // Agregar clases a la tabla
+            tabla.classList.add('table', 'table-striped', 'border', 'border-3');
+
+            // Agregar la tabla al contenedor
+            document.getElementById('divRazon').appendChild(tabla);
+        }).obtenerRazon();
+    }
 </script>
