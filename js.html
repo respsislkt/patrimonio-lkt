@@ -7,62 +7,74 @@
         }
 
         // Llama a la función en el servidor
-        google.script.run.withSuccessHandler(function (obj) {
-            // Crea la tabla
-            let tabla = document.createElement('table');
-            tabla.id = 'tablaRazon';
-
-            let tablaHeader = document.createElement('thead');
-            let tablaBody = document.createElement('tbody');
-
-            // Header de la tabla
-            let primeraFila = document.createElement('tr');
-            for(let i = 0; i<obj[0].length; i++){
-                let celda = document.createElement('td');
-                celda.textContent = obj[0][i];
-                primeraFila.appendChild(celda);
-            }
-            tablaHeader.appendChild(primeraFila);
-            tabla.appendChild(tablaHeader);
-
-            // Body de la tabla
-            for(let i = 1; i < obj.length; i++){
-                let fila = document.createElement('tr');
-                for(let j = 0; j<obj[i].length; j++){
-                    let celda = document.createElement('td');
-                    celda.textContent = obj[i][j];
-                    fila.appendChild(celda);
-                }
-                tablaBody.appendChild(fila);
-            }
-
-            // Array.from(obj).forEach((filaActual, i) => {
-            //     let fila = document.createElement('tr');
-            //     filaActual.forEach(celdaActual => {
-            //         let celda = document.createElement('td');
-            //         celda.textContent = celdaActual;
-            //         fila.appendChild(celda);
-            //     });
-
-            //     if (i === 0) {
-            //         // Añadir la primera fila a la cabecera
-            //         tablaHeader.appendChild(fila);
-            //     } else {
-            //         // Añadir las siguientes filas al cuerpo
-            //         tablaBody.appendChild(fila);
-            //     }
-            // });
-
-            // Agregar las clases a la cabecera y al cuerpo
-            tablaHeader.classList.add('table-dark');
-            tabla.appendChild(tablaHeader);
-            tabla.appendChild(tablaBody);
-
-            // Agregar clases a la tabla
-            tabla.classList.add('table', 'table-striped', 'border', 'border-3');
-
-            // Agregar la tabla al contenedor
-            document.getElementById('divRazon').appendChild(tabla);
-        }).obtenerRazon();
+        google.script.run.withSuccessHandler(crearTablaRazonCorrectamente).withFailureHandler(crearTablaRazonError).obtenerRazon();
     }
+
+    function crearTablaRazonCorrectamente(obj) {
+        // Crea la tabla
+        let tabla = document.createElement('table');
+        tabla.id = 'tablaRazon';
+
+        let tablaHeader = document.createElement('thead');
+        let tablaBody = document.createElement('tbody');
+
+        // Header de la tabla
+        let primeraFila = document.createElement('tr');
+        for (let i = 0; i < obj[0].length; i++) {
+            let celda = document.createElement('td');
+            celda.textContent = obj[0][i];
+            primeraFila.appendChild(celda);
+        }
+        tablaHeader.appendChild(primeraFila);
+        tabla.appendChild(tablaHeader);
+
+        // Body de la tabla
+        for (let i = 1; i < obj.length; i++) {
+            let fila = document.createElement('tr');
+            for (let j = 0; j < obj[i].length; j++) {
+                let celda = document.createElement('td');
+                celda.textContent = obj[i][j];
+                fila.appendChild(celda);
+            }
+            tablaBody.appendChild(fila);
+        }
+
+        // Agregar las clases a la cabecera y al cuerpo
+        tablaHeader.classList.add('table-dark');
+        tabla.appendChild(tablaHeader);
+        tabla.appendChild(tablaBody);
+
+        // Agregar clases a la tabla
+        tabla.classList.add('table', 'table-striped', 'border', 'border-3');
+
+        // Agregar la tabla al contenedor
+        document.getElementById('divRazon').appendChild(tabla);
+
+        //mostrar notificación de ok
+        crearNotificacion(1,'Lista de razones obtenidos','Todo en orden');
+    }
+
+    function crearTablaRazonError(){
+        // mostrar notificación error
+    }
+
+    function crearNotificacion(tipo, mensaje, titulo){
+        //obtenemos datos
+        let mensajeNotificacion = document.getElementById('mensajeNotificacion');
+        let tituloNotificacion = document.getElementById('tituloNotificacion');
+        let elementoNotificacion = document.getElementById('notificacion');
+        let iconoNotificacion = document.getElementById('iconoNotificacion');
+        let notificacion = bootstrap.Toast.getOrCreateInstance(elementoNotificacion);
+
+        //Editar la notificación
+        iconoNotificacion.className = '';
+        iconoNotificacion.classList.add('bi','bi-check2-square');
+        mensajeNotificacion.textContent = mensaje;
+        tituloNotificacion.textContent = titulo;
+        elementoNotificacion.style.backgroundColor = getComputedStyle(document.documentElement).getPropertyValue('--color-verde-oscuro');
+
+        //Mostrar notificación
+        notificacion.show()
+    }
+
 </script>
